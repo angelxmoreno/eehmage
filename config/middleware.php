@@ -1,0 +1,1 @@
+<?phpdeclare(strict_types=1);namespace App;use Slim\App;use Slim\Middleware\ContentLengthMiddleware;return function (App $app) {    $app->add(new ContentLengthMiddleware);    $app->addRoutingMiddleware();};
