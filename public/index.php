@@ -8,6 +8,7 @@ define('CONFIG_DIR', ROOT_DIR . 'config' . DS);
 define('VENDOR_DIR', ROOT_DIR . 'vendor' . DS);
 define('CACHE_DIR', ROOT_DIR . 'cache' . DS);
 define('LOGS_DIR', ROOT_DIR . 'logs' . DS);
+define('DEVELOPMENT', 'development');
 require VENDOR_DIR . 'autoload.php';
 
 use App\BootLoader;

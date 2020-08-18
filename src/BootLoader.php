@@ -3,23 +3,20 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Handlers\HttpErrorHandler;
+use App\Handlers\ShutdownHandler;
 use DI\Container;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
-use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Exception\HttpMethodNotAllowedException;
-use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
-use Slim\Psr7\Response;
-use Throwable;
+use Slim\Factory\ServerRequestCreatorFactory;
 
 /**
  * Class BootLoader
  * @package App
  *
- * @TODO add error handling http://www.slimframework.com/docs/v4/middleware/error-handling.html
  */
 class BootLoader
 {
@@ -63,12 +60,19 @@ class BootLoader
     {
         $builder = new ContainerBuilder();
 
-        if (false) {
-            //@TODO use proper path and .env to determine isProd
+        if (!self::isDev()) {
             $builder->enableCompilation(CACHE_DIR . 'container');
         }
 
         return $builder->build();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isDev()
+    {
+        return env('ENV', DEVELOPMENT) === DEVELOPMENT;
     }
 
     /**
@@ -86,37 +90,19 @@ class BootLoader
      */
     protected static function addErrorHandlers(App $app)
     {
+        $callable_resolver = $app->getCallableResolver();
+        $response_factory = $app->getResponseFactory();
 
-        /**
-         * Add Error Handling Middleware
-         *
-         * @param bool $displayErrorDetails -> Should be set to false in production
-         * @param bool $logErrors -> Parameter is passed to the default ErrorHandler
-         * @param bool $logErrorDetails -> Display error details in error log
-         * which can be replaced by a callable of your choice.
-         * Note: This middleware should be added last. It will not handle any exceptions/errors
-         * for middleware added after it.
-         */
-        $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+        $server_request_creator = ServerRequestCreatorFactory::create();
+        $request = $server_request_creator->createServerRequestFromGlobals();
 
-        // Set the Not Found Handler
-        $errorMiddleware->setErrorHandler(
-            HttpNotFoundException::class,
-            function (ServerRequestInterface $request, Throwable $exception, bool $displayErrorDetails) {
-                $response = new Response();
-                $response->getBody()->write('404 NOT FOUND');
+        $error_handler = new HttpErrorHandler($callable_resolver, $response_factory);
+        $shutdown_handler = new ShutdownHandler($request, $error_handler, self::isDev());
+        register_shutdown_function($shutdown_handler);
 
-                return $response->withStatus(404);
-            });
 
-        // Set the Not Allowed Handler
-        $errorMiddleware->setErrorHandler(
-            HttpMethodNotAllowedException::class,
-            function (ServerRequestInterface $request, Throwable $exception, bool $displayErrorDetails) {
-                $response = new Response();
-                $response->getBody()->write('405 NOT ALLOWED');
-
-                return $response->withStatus(405);
-            });
+        // Add Error Handling Middleware
+        $error_middleware = $app->addErrorMiddleware(self::isDev(), false, false);
+        $error_middleware->setDefaultErrorHandler($error_handler);
     }
 }
