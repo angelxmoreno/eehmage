@@ -9,7 +9,13 @@
       "email": "angelxmoreno@gmail.com"
     }
   ],
-  "require": {},
+  "require": {
+    "php": "^7.2",
+    "ext-json": "^1.6",
+    "php-di/php-di": "^6.2",
+    "slim/psr7": "^1.1",
+    "slim/slim": "^4.5"
+  },
   "prefer-stable": true,
   "config": {
     "sort-packages": true
