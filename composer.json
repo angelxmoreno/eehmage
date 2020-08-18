@@ -1,0 +1,17 @@
+{
+  "name": "angelxmoreno/eehmage",
+  "description": "Opensource Image hosting",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Angel X. Moreno",
+      "email": "angelxmoreno@gmail.com"
+    }
+  ],
+  "require": {},
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
+  }
+}
