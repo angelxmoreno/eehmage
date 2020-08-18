@@ -1,0 +1,47 @@
+version: '2'
+services:
+  fpm:
+    env_file:
+      - ./.env
+    container_name: '${APP_PREFIX}-fpm'
+    image: angelxmoreno/php7-fpm-alpine-dev
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./docker/config/fpm/ini/sessions.ini:/usr/local/etc/php/conf.d/redis_session.ini
+      - ./docker/config/fpm/ini/date.ini:/usr/local/etc/php/conf.d/date.ini
+    links:
+      - redis
+      - mysql
+  web:
+    container_name: '${APP_PREFIX}-web'
+    image: library/nginx:1.19-alpine
+    links:
+      - fpm
+    ports:
+      - "${PORT_PREFIX}11:80"
+    volumes:
+      - ./docker/config/nginx/site.conf:/etc/nginx/conf.d/_site.conf:ro
+    volumes_from:
+      - fpm
+  mysql:
+    container_name: '${APP_PREFIX}-mysql'
+    image: library/mariadb:10.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=${APP_PREFIX}
+      - MYSQL_USER=${APP_PREFIX}
+      - MYSQL_PASSWORD=${APP_PREFIX}
+      - MYSQL_DATABASE=${APP_PREFIX}
+    volumes:
+      - './docker/data/mysql:/var/lib/mysql'
+    ports:
+      - '${PORT_PREFIX}12:3306'
+
+  redis:
+    container_name: '${APP_PREFIX}-redis'
+    image: library/redis:6.0-alpine
+    ports:
+      - '${PORT_PREFIX}13:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - './docker/data/redis/:/data'
