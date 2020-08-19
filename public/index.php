@@ -16,6 +16,14 @@ use App\BootLoader;
 try {
     BootLoader::init();
 } catch (\Exception $e) {
-    echo "Error while booting: " . $e->getMessage() . PHP_EOL;
-    echo "<br /><xmp>{$e->getTraceAsString()}</xmp>";
+    $description = 'Error while booting: ' . $e->getMessage();
+    fwrite(fopen('php://stderr', 'w'), $description);
+    header('X-PHP-Response-Code: 500', true, 500);
+    echo json_encode([
+        'statusCode' => 500,
+        'error' => [
+            'type' => get_class($e),
+            'description' => $description,
+        ],
+    ]);
 }

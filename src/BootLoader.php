@@ -102,7 +102,7 @@ class BootLoader
 
 
         // Add Error Handling Middleware
-        $error_middleware = $app->addErrorMiddleware(self::isDev(), false, false);
+        $error_middleware = $app->addErrorMiddleware(self::isDev(), true, true);
         $error_middleware->setDefaultErrorHandler($error_handler);
     }
 }
