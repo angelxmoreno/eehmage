@@ -12,7 +12,11 @@
   "require": {
     "php": "^7.2",
     "ext-json": "^1.6",
+    "cakephp/collection": "3.5",
+    "cakephp/core": "3.5",
+    "cakephp/utility": "3.5",
     "php-di/php-di": "^6.2",
+    "rakshazi/get-set-trait": "^1.0",
     "slim/psr7": "^1.1",
     "slim/slim": "^4.5"
   },
@@ -24,5 +28,8 @@
   "prefer-stable": true,
   "config": {
     "sort-packages": true
+  },
+  "require-dev": {
+    "angelxmoreno/get-set-annotations": "^1.1"
   }
 }
