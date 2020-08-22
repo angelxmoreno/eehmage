@@ -59,9 +59,11 @@ class BootLoader
     protected static function buildContainer(): Container
     {
         $builder = new ContainerBuilder();
-
+        $definitions = require CONFIG_DIR . 'definitions.php';
+        $builder->addDefinitions($definitions);
         if (!self::isDev()) {
-            $builder->enableCompilation(CACHE_DIR . 'container');
+            $builder->enableCompilation(CACHE_DIR . 'containerCompilation');
+            $builder->writeProxiesToFile(true, CACHE_DIR . 'containerProxies');
         }
 
         return $builder->build();
@@ -70,9 +72,9 @@ class BootLoader
     /**
      * @return bool
      */
-    public static function isDev()
+    public static function isDev(): bool
     {
-        return env('ENV', DEVELOPMENT) === DEVELOPMENT;
+        return $_ENV['ENV'] === DEVELOPMENT;
     }
 
     /**
@@ -102,7 +104,7 @@ class BootLoader
 
 
         // Add Error Handling Middleware
-        $error_middleware = $app->addErrorMiddleware(self::isDev(), true, true);
+        $error_middleware = $app->addErrorMiddleware(self::isDev(), false, false);
         $error_middleware->setDefaultErrorHandler($error_handler);
     }
 }

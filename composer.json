@@ -11,14 +11,20 @@
   ],
   "require": {
     "php": "^7.2",
+    "ext-PDO": "^7.2",
     "ext-json": "^1.6",
     "cakephp/collection": "3.5",
     "cakephp/core": "3.5",
     "cakephp/utility": "3.5",
+    "illuminate/database": "^7.25",
+    "illuminate/events": "^7.25",
     "php-di/php-di": "^6.2",
     "rakshazi/get-set-trait": "^1.0",
+    "ramsey/uuid": "^4.1",
     "slim/psr7": "^1.1",
-    "slim/slim": "^4.5"
+    "slim/slim": "^4.5",
+    "vlucas/phpdotenv": "^5.1",
+    "vlucas/valitron": "^1.4"
   },
   "autoload": {
     "psr-4": {

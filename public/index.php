@@ -12,18 +12,13 @@ define('DEVELOPMENT', 'development');
 require VENDOR_DIR . 'autoload.php';
 
 use App\BootLoader;
+use App\Errors\ErrorObj;
 
 try {
     BootLoader::init();
-} catch (\Exception $e) {
-    $description = 'Error while booting: ' . $e->getMessage();
-    fwrite(fopen('php://stderr', 'w'), $description);
+} catch (\Exception $exception) {
+    $description = 'Error while booting: ' . $exception->getMessage();
     header('X-PHP-Response-Code: 500', true, 500);
-    echo json_encode([
-        'statusCode' => 500,
-        'error' => [
-            'type' => get_class($e),
-            'description' => $description,
-        ],
-    ]);
+    header('Content-Type: application/json');
+    echo json_encode(new ErrorObj($exception, false));
 }

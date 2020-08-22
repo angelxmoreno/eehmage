@@ -72,7 +72,10 @@ class HttpErrorHandler extends ErrorHandler
                 'description' => $description,
             ],
         ];
-
+        if ($this->displayErrorDetails && method_exists($exception, 'getTrace')) {
+            $error['error']['class'] = get_class($exception);
+            $error['error']['stack'] = $exception->getTrace();
+        }
         $payload = json_encode($error, JSON_PRETTY_PRINT);
 
         $response = $this->responseFactory->createResponse($status_code);
