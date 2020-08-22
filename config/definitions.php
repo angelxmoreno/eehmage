@@ -8,13 +8,13 @@ use Psr\Container\ContainerInterface;
 use function DI\env;
 
 return [
-    'db.url' => env('DATABASE_URL'),
+    'app.apiKey' => env('APP_API_KEY'),
     'app.salt' => env('SECURITY_SALT'),
-    'redis.url' => env('REDIS_URL'),
     'app.baseUrl' => env('BASE_URL'),
     'app.env' => env('ENV'),
+    'db.url' => env('DATABASE_URL'),
+    'redis.url' => env('REDIS_URL'),
     Capsule::class => function (ContainerInterface $c) {
-
         $illuminate_container = new IlluminateContainer;
         $illuminate_dispatcher = new IlluminateDispatcher($illuminate_container);
         $capsule = new Capsule;
