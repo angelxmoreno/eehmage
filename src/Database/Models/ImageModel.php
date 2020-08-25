@@ -67,6 +67,7 @@ class ImageModel extends ModelBase
     {
         $entity = parent::buildFromRequest($request);
         try {
+            $entity->validateOrFail();
             ImageUploadService::uploadFromRequest($entity, $request);
         } catch (\Exception $exception) {
             throw new ValidationError(
