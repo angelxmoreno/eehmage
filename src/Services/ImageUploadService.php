@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Database\Models\ImageModel;
 use App\Errors\ImageUploadException;
 use App\Errors\ValidationError;
-use App\Helpers\UploadErrorMessages;
 use Cake\Utility\Hash;
 use Psr\Http\Message\UploadedFileInterface;
 use Slim\Psr7\Request;
@@ -18,6 +17,15 @@ use Slim\Psr7\Request;
  */
 class ImageUploadService
 {
+    use UploadFileTrait;
+    use UploadUrlTrait;
+
+    /**
+     * @param ImageModel $imageEntity
+     * @param Request $request
+     * @throws ImageUploadException
+     * @throws ValidationError
+     */
     public static function uploadFromRequest(ImageModel $imageEntity, Request $request)
     {
         $upload = Hash::get($request->getUploadedFiles(), 'imgFile', false);
@@ -25,6 +33,8 @@ class ImageUploadService
         $string = Hash::get($request->getParsedBody(), 'imgStr', false);
         if ($upload) {
             self::uploadFile($imageEntity, $upload);
+        } elseif ($url) {
+            self::uploadUrl($imageEntity, $url);
         } else {
             throw new ValidationError(['image' => 'No image found in request']);
         }
@@ -45,22 +55,7 @@ class ImageUploadService
         self::validateIsImage(UPLOADS_TMP . $tmp_file_name);
         $original_file_name = $upload->getClientFilename();
         self::populateFileData($imageEntity, $tmp_file_name, $original_file_name);
-        rename(UPLOADS_TMP . $tmp_file_name, $imageEntity->path);
-    }
-
-    /**
-     * @param UploadedFileInterface $upload
-     * @throws ImageUploadException
-     */
-    protected static function validateUploadFile(UploadedFileInterface $upload)
-    {
-        $uploadErrorCode = $upload->getError();
-        if ($uploadErrorCode !== UPLOAD_ERR_OK) {
-            throw new ImageUploadException(
-                UploadErrorMessages::codeToMessage($uploadErrorCode),
-                400
-            );
-        }
+        self::moveToGroupDir($imageEntity, $tmp_file_name);
     }
 
     /**
@@ -70,7 +65,7 @@ class ImageUploadService
      */
     protected static function getTmpFilePath(string $file_name)
     {
-        $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        $extension = 'png';
         $basename = bin2hex(random_bytes(8));
         return sprintf('%s.%0.8s', $basename, $extension);
     }
@@ -111,8 +106,30 @@ class ImageUploadService
         $imageEntity->path = $imageEntity->getImagePath();
     }
 
-    public static function uploadUrl()
+    /**
+     * @param ImageModel $imageEntity
+     * @param string $tmp_file_name
+     */
+    protected static function moveToGroupDir(ImageModel $imageEntity, string $tmp_file_name)
     {
+        self::ensureGroupDirExists($imageEntity);
+        rename(UPLOADS_TMP . $tmp_file_name, $imageEntity->path);
+    }
+
+    /**
+     * @param ImageModel $imageEntity
+     * @param string $url
+     * @throws ImageUploadException
+     */
+    public static function uploadUrl(ImageModel $imageEntity, string $url)
+    {
+        self::validateUploadUrl($url);
+
+        $tmp_file_name = self::simulateUploadFile($url);
+        self::validateIsImage(UPLOADS_TMP . $tmp_file_name);
+        $original_file_name = $tmp_file_name;
+        self::populateFileData($imageEntity, $tmp_file_name, $original_file_name);
+        self::moveToGroupDir($imageEntity, $tmp_file_name);
     }
 
     public static function uploadBase64()

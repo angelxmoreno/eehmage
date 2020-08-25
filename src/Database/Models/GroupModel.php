@@ -10,22 +10,18 @@ use Valitron\Validator;
 /**
  * Class GroupModel
  * @package App\Models
+ *
+ * @property string $id
+ * @property bool $is_active
+ * @property string $name
+ * @property string $dir
+ * @property-read string $dir_path
+ * @property \DateTimeInterface $created
+ * @property \DateTimeInterface $modified
+ * @property \DateTimeInterface $deleted
  */
 class GroupModel extends ModelBase
 {
-    /**
-     * @var string[]
-     */
-    protected $props = [
-        'id',
-        'is_active',
-        'name',
-        'dir',
-        'created',
-        'modified',
-        'deleted',
-    ];
-
     /**
      * @var string[]
      */
@@ -39,6 +35,14 @@ class GroupModel extends ModelBase
     public function images()
     {
         return $this->hasMany(ImageModel::class);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirPathAttribute()
+    {
+        return UPLOADS_DIR . $this->dir;
     }
 
     protected function getRules(Validator $validator): Validator

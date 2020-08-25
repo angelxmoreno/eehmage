@@ -5,3 +5,5 @@ vendor/
 .env
 cache/*
 !cache/uploads/.gitkeep
+public/uploads/*
+!public/uploads/.gitkeep

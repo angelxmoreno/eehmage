@@ -16,6 +16,7 @@ use Valitron\Validator;
  * @property string $group_id
  * @property bool $is_active
  * @property string $name
+ * @property-read string $url
  * @property string $original_name
  * @property string $path
  * @property int $size
@@ -74,7 +75,7 @@ class ImageModel extends ModelBase
      */
     public function getImagePath()
     {
-        return UPLOADS_DIR . $this->group->dir . $this->name;
+        return $this->group->dir_path . $this->name;
     }
 
     /**
@@ -92,7 +93,7 @@ class ImageModel extends ModelBase
     {
         return sprintf(
             '%s/uploads/%s%s',
-            $_ENV['BASE_URL'],
+            trim($_ENV['BASE_URL'], '/'),
             $this->group->dir,
             $this->name
         );
