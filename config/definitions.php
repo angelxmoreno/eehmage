@@ -5,15 +5,12 @@ use Illuminate\Container\Container as IlluminateContainer;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher as IlluminateDispatcher;
 use Psr\Container\ContainerInterface;
-use function DI\env;
 
 return [
-    'app.apiKey' => env('APP_API_KEY'),
-    'app.salt' => env('SECURITY_SALT'),
-    'app.baseUrl' => env('BASE_URL'),
-    'app.env' => env('ENV'),
-    'db.url' => env('DATABASE_URL'),
-    'redis.url' => env('REDIS_URL'),
+    'app.apiKey' => $_ENV['APP_API_KEY'],
+    'app.baseUrl' => $_ENV['BASE_URL'],
+    'app.env' => $_ENV['ENV'],
+    'db.url' => $_ENV['DATABASE_URL'],
     Capsule::class => function (ContainerInterface $c) {
         $illuminate_container = new IlluminateContainer;
         $illuminate_dispatcher = new IlluminateDispatcher($illuminate_container);

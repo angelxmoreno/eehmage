@@ -7,3 +7,4 @@ cache/*
 !cache/uploads/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
+prod.env
