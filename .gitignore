@@ -3,7 +3,7 @@ logs/*
 !logs/.gitkeep
 vendor/
 .env
-cache/*
+cache/uploads/*
 !cache/uploads/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
