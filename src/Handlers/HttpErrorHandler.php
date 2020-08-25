@@ -2,6 +2,7 @@
 
 namespace App\Handlers;
 
+use App\Errors\HttpValidationException;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Exception\HttpBadRequestException;
@@ -27,6 +28,7 @@ class HttpErrorHandler extends ErrorHandler
     public const RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND';
     public const SERVER_ERROR = 'SERVER_ERROR';
     public const UNAUTHENTICATED = 'UNAUTHENTICATED';
+    public const VALIDATION_ERROR = 'VALIDATION_ERROR';
 
     /**
      * @return ResponseInterface
@@ -37,6 +39,9 @@ class HttpErrorHandler extends ErrorHandler
         $status_code = 500;
         $type = self::SERVER_ERROR;
         $description = 'An internal error has occurred while processing your request.';
+        $class = null;
+        $messages = null;
+        $trace = null;
 
         if ($exception instanceof HttpException) {
             $status_code = $exception->getCode();
@@ -54,28 +59,46 @@ class HttpErrorHandler extends ErrorHandler
                 $type = self::BAD_REQUEST;
             } elseif ($exception instanceof HttpNotImplementedException) {
                 $type = self::NOT_IMPLEMENTED;
+            } elseif ($exception instanceof HttpValidationException) {
+                $type = self::VALIDATION_ERROR;
             }
+        } else {
+            $type = class_basename($exception);
         }
 
         if (
-            !($exception instanceof HttpException)
-            && ($exception instanceof Exception || $exception instanceof Throwable)
+            ($exception instanceof Exception || $exception instanceof Throwable)
             && $this->displayErrorDetails
         ) {
             $description = $exception->getMessage();
         }
 
+        if (
+            ($exception instanceof Exception || $exception instanceof Throwable)
+            && $this->displayErrorDetails
+        ) {
+            $class = get_class($exception);
+            $trace = $exception->getTrace();
+        }
+
+        if (method_exists($exception, 'getMessages')) {
+            $messages = $exception->getMessages();
+        }
+
         $error = [
             'statusCode' => $status_code,
             'error' => [
-                'type' => $type,
-                'description' => $description,
-            ],
+                'type' => $type
+            ]
         ];
-        if ($this->displayErrorDetails && method_exists($exception, 'getTrace')) {
-            $error['error']['class'] = get_class($exception);
-            $error['error']['stack'] = $exception->getTrace();
+
+        foreach (['description', 'class', 'messages', 'trace'] as $key) {
+            if (!is_null($$key)) {
+                $error['error'][$key] = $$key;
+            }
         }
+
+
         $payload = json_encode($error, JSON_PRETTY_PRINT);
 
         $response = $this->responseFactory->createResponse($status_code);

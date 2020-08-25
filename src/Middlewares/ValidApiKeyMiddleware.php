@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Cake\Utility\Hash;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
@@ -39,16 +36,24 @@ class ValidApiKeyMiddleware
      */
     public function __invoke(Request $request, RequestHandler $handler)
     {
-        $reqApiKey = Hash::get($request->getQueryParams(),'api_key');
+        $reqApiKey = $this->getRequestApiKey($request);
         $appApiKey = $this->container->get('app.apiKey');
-        if($reqApiKey !== $appApiKey){
+        if ($reqApiKey !== $appApiKey) {
             $response = new Response();
             return $response
                 ->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');
-
-
         }
         return $handler->handle($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    protected function getRequestApiKey(Request $request)
+    {
+        $header = $request->getHeaderLine('Authorization') ?? '';
+        return str_ireplace('Bearer ', '', $header);
     }
 }

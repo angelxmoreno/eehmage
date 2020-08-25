@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9b4c5c9bc9c868c046f37543f155fd8",
+    "content-hash": "cbea4e3a64ab84f95c927f1d57dc662d",
     "packages": [
         {
             "name": "brick/math",
@@ -639,16 +639,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.38.0",
+            "version": "2.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "d8f6a6a91d1eb9304527b040500f61923e97674b"
+                "reference": "0a41ea7f7fedacf307b7a339800e10356a042918"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/d8f6a6a91d1eb9304527b040500f61923e97674b",
-                "reference": "d8f6a6a91d1eb9304527b040500f61923e97674b",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/0a41ea7f7fedacf307b7a339800e10356a042918",
+                "reference": "0a41ea7f7fedacf307b7a339800e10356a042918",
                 "shasum": ""
             },
             "require": {
@@ -714,7 +714,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2020-08-04T19:12:46+00:00"
+            "time": "2020-08-24T12:35:58+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -868,16 +868,16 @@
         },
         {
             "name": "php-di/php-di",
-            "version": "6.2.1",
+            "version": "6.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/PHP-DI.git",
-                "reference": "6875fe557c244b3830862c072c7719ca4ac2efe4"
+                "reference": "40140b5bca07c5fed6919a0f1029ff67617faccd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/6875fe557c244b3830862c072c7719ca4ac2efe4",
-                "reference": "6875fe557c244b3830862c072c7719ca4ac2efe4",
+                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/40140b5bca07c5fed6919a0f1029ff67617faccd",
+                "reference": "40140b5bca07c5fed6919a0f1029ff67617faccd",
                 "shasum": ""
             },
             "require": {
@@ -926,7 +926,7 @@
                 "ioc",
                 "psr11"
             ],
-            "time": "2020-06-18T09:54:32+00:00"
+            "time": "2020-08-23T16:23:17+00:00"
         },
         {
             "name": "php-di/phpdoc-reader",
@@ -1601,30 +1601,31 @@
         },
         {
             "name": "slim/psr7",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim-Psr7.git",
-                "reference": "3c76899e707910779f13d7af95fde12310b0a5ae"
+                "reference": "832912cb3c2a807d472ef0ac392552e85703a667"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim-Psr7/zipball/3c76899e707910779f13d7af95fde12310b0a5ae",
-                "reference": "3c76899e707910779f13d7af95fde12310b0a5ae",
+                "url": "https://api.github.com/repos/slimphp/Slim-Psr7/zipball/832912cb3c2a807d472ef0ac392552e85703a667",
+                "reference": "832912cb3c2a807d472ef0ac392552e85703a667",
                 "shasum": ""
             },
             "require": {
-                "fig/http-message-util": "^1.1.2",
+                "fig/http-message-util": "^1.1.4",
                 "php": "^7.2",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0",
                 "ralouphie/getallheaders": "^3"
             },
             "provide": {
+                "psr/http-factory-implementation": "1.0",
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "adriansuter/php-autoload-override": "^1.0",
+                "adriansuter/php-autoload-override": "^1.2",
                 "ext-json": "*",
                 "http-interop/http-factory-tests": "^0.6.0",
                 "php-http/psr7-integration-tests": "dev-master",
@@ -1671,7 +1672,7 @@
                 "psr-7",
                 "psr7"
             ],
-            "time": "2020-05-01T14:24:20+00:00"
+            "time": "2020-08-18T22:49:11+00:00"
         },
         {
             "name": "slim/slim",
@@ -2779,7 +2780,8 @@
     "platform": {
         "php": "^7.2",
         "ext-pdo": "^7.2",
-        "ext-json": "^1.6"
+        "ext-json": "^1.6",
+        "ext-fileinfo": "*"
     },
     "platform-dev": []
 }
