@@ -19,6 +19,7 @@ class ImageUploadService
 {
     use UploadFileTrait;
     use UploadUrlTrait;
+    use UploadStringTrait;
 
     /**
      * @param ImageModel $imageEntity
@@ -30,9 +31,11 @@ class ImageUploadService
     {
         $upload = Hash::get($request->getUploadedFiles(), 'imgFile', false);
         $url = Hash::get($request->getParsedBody(), 'imgUrl', false);
-        $string = Hash::get($request->getParsedBody(), 'imgStr', false);
+        $string = Hash::get($request->getParsedBody(), 'imgString', false);
         if ($upload) {
             self::uploadFile($imageEntity, $upload);
+        } elseif ($string) {
+            self::uploadBase64($imageEntity, $string);
         } elseif ($url) {
             self::uploadUrl($imageEntity, $url);
         } else {
@@ -50,24 +53,22 @@ class ImageUploadService
     {
         self::validateUploadFile($upload);
 
-        $tmp_file_name = self::getTmpFilePath($upload->getClientFilename());
+        $tmp_file_name = self::getTmpFilePath();
         $upload->moveTo(UPLOADS_TMP . $tmp_file_name);
+
         self::validateIsImage(UPLOADS_TMP . $tmp_file_name);
-        $original_file_name = $upload->getClientFilename();
-        self::populateFileData($imageEntity, $tmp_file_name, $original_file_name);
+        self::populateFileData($imageEntity, $tmp_file_name, $upload->getClientFilename());
         self::moveToGroupDir($imageEntity, $tmp_file_name);
     }
 
     /**
-     * @param string $file_name
      * @return string
      * @throws \Exception
      */
-    protected static function getTmpFilePath(string $file_name)
+    protected static function getTmpFilePath()
     {
-        $extension = 'png';
         $basename = bin2hex(random_bytes(8));
-        return sprintf('%s.%0.8s', $basename, $extension);
+        return sprintf('%s.%0.8s', $basename, 'png');
     }
 
     /**
@@ -118,6 +119,21 @@ class ImageUploadService
 
     /**
      * @param ImageModel $imageEntity
+     * @param string $base64string
+     * @throws ImageUploadException
+     */
+    public static function uploadBase64(ImageModel $imageEntity, string $base64string)
+    {
+        self::validateUploadString($base64string);
+        $tmp_file_name = self::simulateUploadFileUrl($base64string);
+
+        self::validateIsImage(UPLOADS_TMP . $tmp_file_name);
+        self::populateFileData($imageEntity, $tmp_file_name, $tmp_file_name);
+        self::moveToGroupDir($imageEntity, $tmp_file_name);
+    }
+
+    /**
+     * @param ImageModel $imageEntity
      * @param string $url
      * @throws ImageUploadException
      */
@@ -125,14 +141,11 @@ class ImageUploadService
     {
         self::validateUploadUrl($url);
 
-        $tmp_file_name = self::simulateUploadFile($url);
+        $tmp_file_name = self::simulateUploadFileUrl($url);
+
         self::validateIsImage(UPLOADS_TMP . $tmp_file_name);
-        $original_file_name = $tmp_file_name;
-        self::populateFileData($imageEntity, $tmp_file_name, $original_file_name);
+        self::populateFileData($imageEntity, $tmp_file_name, $tmp_file_name);
         self::moveToGroupDir($imageEntity, $tmp_file_name);
     }
 
-    public static function uploadBase64()
-    {
-    }
 }
