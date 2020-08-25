@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Database\Models;
 
 use App\Database\ModelBase;
+use App\Errors\ValidationError;
 use App\Services\ImageUploadService;
 use Slim\Psr7\Request;
 use Valitron\Validator;
@@ -60,13 +61,20 @@ class ImageModel extends ModelBase
     /**
      * @param Request $request
      * @return static
-     * @throws \App\Errors\ValidationError
+     * @throws ValidationError
      */
     public static function buildFromRequest(Request $request)
     {
         $entity = parent::buildFromRequest($request);
-
-        ImageUploadService::uploadFromRequest($entity, $request);
+        try {
+            ImageUploadService::uploadFromRequest($entity, $request);
+        } catch (\Exception $exception) {
+            throw new ValidationError(
+                ['image' => $exception->getMessage()],
+                null,
+                $exception
+            );
+        }
         return $entity;
     }
 

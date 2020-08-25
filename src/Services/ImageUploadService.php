@@ -25,13 +25,13 @@ class ImageUploadService
      * @param ImageModel $imageEntity
      * @param Request $request
      * @throws ImageUploadException
-     * @throws ValidationError
      */
     public static function uploadFromRequest(ImageModel $imageEntity, Request $request)
     {
         $upload = Hash::get($request->getUploadedFiles(), 'imgFile', false);
         $url = Hash::get($request->getParsedBody(), 'imgUrl', false);
         $string = Hash::get($request->getParsedBody(), 'imgString', false);
+
         if ($upload) {
             self::uploadFile($imageEntity, $upload);
         } elseif ($string) {
@@ -39,7 +39,7 @@ class ImageUploadService
         } elseif ($url) {
             self::uploadUrl($imageEntity, $url);
         } else {
-            throw new ValidationError(['image' => 'No image found in request']);
+            throw new \UnexpectedValueException('No image found in request', 400);
         }
     }
 

@@ -28,12 +28,13 @@ class ValidationError extends \Exception
      * ValidationError constructor.
      * @param array $validationErrors
      * @param string $name
+     * @param \Throwable|null $previous
      */
-    public function __construct(array $validationErrors = [], ?string $name = null)
+    public function __construct(array $validationErrors = [], ?string $name = null, \Throwable $previous = null)
     {
         $this->validationErrors = $validationErrors;
         $name = $name ? $name . ' ' . $this->title : $this->title;
-        parent::__construct($name, 400);
+        parent::__construct($name, 400, $previous);
     }
 
     /**
