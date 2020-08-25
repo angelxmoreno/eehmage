@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Database\Behaviors;
 
-use App\Database\ModelBase;
+use App\Errors\ValidationError;
 use Valitron\Validator;
 
 /**
@@ -22,11 +22,22 @@ trait UsesValidator
      */
     protected $validationIsValid;
 
-    public static function bootUsesValidator()
+    /**
+     * @return array
+     */
+    public function getValidationErrors(): array
     {
-        static::creating(function (ModelBase $model) {
-            return $model->runValidation();
-        });
+        return $this->validationErrors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        return is_null($this->validationIsValid)
+            ? $this->runValidation()
+            : $this->validationIsValid;
     }
 
     /**
@@ -59,18 +70,18 @@ trait UsesValidator
     }
 
     /**
-     * @return array
-     */
-    public function getValidationErrors(): array
-    {
-        return $this->validationErrors;
-    }
-
-    /**
      * @return bool
+     * @throws ValidationError
      */
-    public function isValid(): bool
+    public function validateOrFail()
     {
+        $validator = $this->getValidator();
+        $this->validationIsValid = $validator->validate();
+        $this->validationErrors = $validator->errors();
+
+        if (!$this->validationIsValid) {
+            throw new ValidationError($this->validationErrors);
+        }
         return $this->validationIsValid;
     }
 }

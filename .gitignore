@@ -4,4 +4,4 @@ logs/*
 vendor/
 .env
 cache/*
-!cache/.gitkeep
+!cache/uploads/.gitkeep

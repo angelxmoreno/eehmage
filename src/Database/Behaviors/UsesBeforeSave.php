@@ -18,5 +18,11 @@ trait UsesBeforeSave
                 $model->beforeSave();
             }
         });
+
+        static::saved(function (ModelBase $model) {
+            if (method_exists($model, 'afterSave')) {
+                $model->afterSave();
+            }
+        });
     }
 }

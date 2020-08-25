@@ -7,6 +7,7 @@ use App\Database\Behaviors;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Slim\Psr7\Request;
 
 /**
  * Class ModelBase
@@ -41,5 +42,17 @@ abstract class ModelBase extends Model
     {
         $table = $this->table ?? Str::snake(Str::pluralStudly(substr(class_basename($this), 0, -5)));
         $this->setTable($table);
+    }
+
+    /**
+     * @param Request $request
+     * @return static
+     */
+    public static function buildFromRequest(Request $request)
+    {
+        $attributes = $request->getParsedBody() ?? [];
+        $entity = new static();
+        $entity->fill($attributes);
+        return $entity;
     }
 }

@@ -18,7 +18,6 @@ class GroupModel extends ModelBase
      */
     protected $props = [
         'id',
-        'user_id',
         'is_active',
         'name',
         'dir',
@@ -31,10 +30,8 @@ class GroupModel extends ModelBase
      * @var string[]
      */
     protected $fillable = [
-        'user_id',
         'name',
     ];
-
 
     /**
      * Get the images for the group
@@ -44,23 +41,12 @@ class GroupModel extends ModelBase
         return $this->hasMany(ImageModel::class);
     }
 
-    /**
-     * Get the user that owns the group
-     */
-    public function user()
-    {
-        return $this->belongsTo(UserModel::class);
-    }
-
-
     protected function getRules(Validator $validator): Validator
     {
-        $validator->rule('required', array('name', 'user_id'))->message('{field} is required');
+        $validator->rule('required', array('name'))->message('{field} is required');
         $validator->rule('lengthBetween', 'name', 3, 16)->message('{field} must be 3 - 16 characters');
-        $uuid_regex = '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/';
-        $validator->rule('regex', 'user_id', $uuid_regex)->message('{field} is not a valid uuid');
         $validator->rule(function ($field, $value, $params, $fields) {
-            $result = GroupModel::whereName($value)->whereUserId($fields['user_id'])->count();
+            $result = GroupModel::whereName($value)->count();
             return $result === 0;
         }, 'name')->message("{field} is already in use");
         return parent::getRules($validator);
@@ -68,6 +54,11 @@ class GroupModel extends ModelBase
 
     protected function beforeSave()
     {
-        $this->dir = '/' . (string)Str::uuid() . '/';
+        $this->dir = (string)Str::uuid() . '/';
+    }
+
+    protected function afterSave()
+    {
+        mkdir(UPLOADS_DIR . $this->dir);
     }
 }

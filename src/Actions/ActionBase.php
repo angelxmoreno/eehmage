@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use Cake\Utility\Hash;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Psr7\Request;
@@ -43,6 +44,7 @@ abstract class ActionBase
      */
     public function __construct(ContainerInterface $container)
     {
+        $container->get(Capsule::class);
         $this->setContainer($container);
     }
 
@@ -106,9 +108,12 @@ abstract class ActionBase
 
     /**
      * @param mixed $data
+     * @param int $status
      */
-    protected function setData($data)
+    protected function setData($data, int $status = 200)
     {
+        $response = $this->getResponse()->withStatus($status);
+        $this->setResponse($response);
         if (!is_scalar($data)) {
             $data = json_encode($data);
             $response = $this->getResponse()->withHeader('Content-Type', 'application/json');

@@ -24,7 +24,8 @@
     "slim/psr7": "^1.1",
     "slim/slim": "^4.5",
     "vlucas/phpdotenv": "^5.1",
-    "vlucas/valitron": "^1.4"
+    "vlucas/valitron": "^1.4",
+    "ext-fileinfo": "*"
   },
   "autoload": {
     "psr-4": {
