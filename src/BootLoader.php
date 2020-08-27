@@ -32,8 +32,7 @@ class BootLoader
         $container = self::buildContainer();
 
         // Instantiate the app
-        AppFactory::setContainer($container);
-        $app = AppFactory::create();
+        $app = self::buildApp($container);
 
         // Register middleware
         self::interpolateApp($app, CONFIG_DIR . 'middleware.php');
@@ -75,6 +74,23 @@ class BootLoader
     public static function isDev(): bool
     {
         return $_ENV['ENV'] === DEVELOPMENT;
+    }
+
+    /**
+     * @param Container $container
+     * @return App
+     */
+    protected static function buildApp(Container $container): App
+    {
+        AppFactory::setContainer($container);
+        $app = AppFactory::create();
+
+        if (!self::isDev()) {
+            $routeCollector = $app->getRouteCollector();
+            $routeCollector->setCacheFile(CACHE_DIR . 'routes/cache.file');
+        }
+
+        return $app;
     }
 
     /**

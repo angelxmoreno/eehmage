@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Database\Models\ImageModel;
 use App\Errors\ImageUploadException;
-use App\Errors\ValidationError;
 use Cake\Utility\Hash;
 use Psr\Http\Message\UploadedFileInterface;
 use Slim\Psr7\Request;

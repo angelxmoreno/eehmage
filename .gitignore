@@ -1,10 +1,13 @@
 docker/data
-logs/*
-!logs/.gitkeep
 vendor/
 .env
+prod.env
+
+logs/*
+!logs/.gitkeep
 cache/uploads/*
 !cache/uploads/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
-prod.env
+cache/routes/*
+!cache/routes/.gitkeep
