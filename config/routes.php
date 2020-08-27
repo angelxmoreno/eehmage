@@ -7,7 +7,6 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
-    $app->get('/hello[/{name}]', Actions\HomeAction::class);
     $app->get('/', Actions\HomeAction::class);
 
     $app->group('/groups/[{id}]', function (RouteCollectorProxy $group) {

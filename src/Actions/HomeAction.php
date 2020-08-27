@@ -11,7 +11,8 @@ class HomeAction extends ActionBase
 {
     public function run()
     {
-        $name = $this->getArg('name', 'John Doe');
-        $this->setData(compact('name'));
+        $this->setData([
+            'status' => 'ok'
+        ]);
     }
 }
