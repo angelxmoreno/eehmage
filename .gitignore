@@ -5,9 +5,11 @@ prod.env
 
 logs/*
 !logs/.gitkeep
-cache/uploads/*
-!cache/uploads/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
+cache/uploads/*
+!cache/uploads/.gitkeep
 cache/routes/*
 !cache/routes/.gitkeep
+cache/containerCompilation/*
+!cache/containerCompilation/.gitkeep
