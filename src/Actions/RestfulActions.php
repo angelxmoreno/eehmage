@@ -41,7 +41,7 @@ abstract class RestfulActions extends ActionBase
      */
     public function view(string $id)
     {
-        $this->setData($this->getModel()->find($id));
+        $this->setData($this->getModel()::find($id));
     }
 
     /**

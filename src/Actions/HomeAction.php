@@ -11,8 +11,12 @@ class HomeAction extends ActionBase
 {
     public function run()
     {
+        $authorization = $this->getRequest()->getHeaderLine('Authorization');
+        $apiKey = str_replace('Bearer ', '', $authorization);
+        $apiOk = $apiKey === $_ENV['APP_API_KEY'];
         $this->setData([
-            'status' => 'ok'
+            'status' => 'ok',
+            'auth' => $apiOk
         ]);
     }
 }
