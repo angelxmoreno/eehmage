@@ -36,24 +36,9 @@ class ImageModel extends ModelBase
     /**
      * @var string[]
      */
-    protected $props = [
-
-    ];
-
-    /**
-     * @var string[]
-     */
     protected $fillable = [
         'group_id',
-        'is_active',
-        'name',
-        'original_name',
-        'path',
-        'size',
-        'type',
-        'width',
-        'height',
-        'mime',
+        'is_active'
     ];
 
     protected $appends = ['url'];
@@ -108,18 +93,17 @@ class ImageModel extends ModelBase
         );
     }
 
+    /**
+     * @param Validator $validator
+     * @return Validator
+     */
     protected function getRules(Validator $validator): Validator
     {
         $validator->rule('required', [
             'group_id',
         ])->message('{field} is required');
-        $validator->rule(function ($field, $value, $params, $fields) {
-            $result = GroupModel::whereId($value)->count();
-            return $result === 1;
-        }, 'group_id')->message("Group id does not exist");
-        $validator->rule('urlActive', 'imgUrl')->message('"imgUrl" must be a valid url');
-        $validator->rule('urlActive', 'imgStr')->message('"imgStr" must be string');
-//        $validator->rule('instanceOf','imgStr')->message('"imgStr" must be string');
+        $validator->rule('ExistsInDb', 'group_id', GroupModel::class, 'group_id');
+        $validator->rule('boolean', 'is_active');
         return parent::getRules($validator);
     }
 }

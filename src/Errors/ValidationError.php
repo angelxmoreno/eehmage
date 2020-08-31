@@ -27,7 +27,7 @@ class ValidationError extends \Exception
     /**
      * ValidationError constructor.
      * @param array $validationErrors
-     * @param string $name
+     * @param string|null $name
      * @param \Throwable|null $previous
      */
     public function __construct(array $validationErrors = [], ?string $name = null, \Throwable $previous = null)

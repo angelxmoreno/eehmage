@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Database\Behaviors;
 
 use App\Errors\ValidationError;
+use App\Validators\ValidationRules;
 use Valitron\Validator;
 
 /**
@@ -57,7 +58,7 @@ trait UsesValidator
      */
     protected function getValidator()
     {
-        return $this->getRules(new Validator())->withData($this->toArray());
+        return $this->getRules(ValidationRules::init())->withData($this->toArray());
     }
 
     /**

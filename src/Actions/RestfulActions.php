@@ -6,6 +6,8 @@ namespace App\Actions;
 use App\Database\ModelBase;
 use App\Errors\HttpValidationException;
 use App\Errors\ValidationError;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Slim\Exception\HttpNotFoundException;
 
 /**
  * Class RestfulActions
@@ -29,7 +31,7 @@ abstract class RestfulActions extends ActionBase
             $this->list();
         } elseif ($method === self::DELETE && $id) {
             $this->delete($id);
-        } elseif ($method === self::POST && $id) {
+        } elseif ($method === self::PATCH && $id) {
             $this->update($id);
         } elseif ($method === self::POST && !$id) {
             $this->create();
@@ -64,10 +66,24 @@ abstract class RestfulActions extends ActionBase
 
     /**
      * @param string $id
+     * @throws HttpValidationException
+     * @throws HttpNotFoundException
+     * @throws \Throwable
      */
     public function update(string $id)
     {
-        $this->setData("todo");
+        try {
+            /** @var ModelBase $entity */
+            $entity = $this->getModel()::findOrFail($id);
+            $entity->fill($this->getPostValues());
+            $entity->validateOrFail();
+            $entity->saveOrFail();
+            $this->setData($entity, 200);
+        } catch (ModelNotFoundException $modelNotFoundException) {
+            throw new HttpNotFoundException($this->getRequest());
+        } catch (ValidationError $validationError) {
+            throw new HttpValidationException($this->getRequest(), $validationError);
+        }
     }
 
     /**

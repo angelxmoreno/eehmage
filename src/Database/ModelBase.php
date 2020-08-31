@@ -26,6 +26,10 @@ abstract class ModelBase extends Model
     const UPDATED_AT = 'modified';
     const DELETED_AT = 'deleted';
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     /**
      * Create a new Eloquent model instance.
      *

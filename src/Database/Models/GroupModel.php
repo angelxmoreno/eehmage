@@ -6,6 +6,7 @@ namespace App\Database\Models;
 use App\Database\ModelBase;
 use Illuminate\Support\Str;
 use Valitron\Validator;
+use function App\Validators\UniqueDbValidator;
 
 /**
  * Class GroupModel
@@ -49,10 +50,7 @@ class GroupModel extends ModelBase
     {
         $validator->rule('required', array('name'))->message('{field} is required');
         $validator->rule('lengthBetween', 'name', 3, 16)->message('{field} must be 3 - 16 characters');
-        $validator->rule(function ($field, $value, $params, $fields) {
-            $result = GroupModel::whereName($value)->count();
-            return $result === 0;
-        }, 'name')->message("{field} is already in use");
+        $validator->rule('UniqueInDb', 'name', GroupModel::class, 'name');//->message("{field} is already in use");
         return parent::getRules($validator);
     }
 
@@ -63,6 +61,8 @@ class GroupModel extends ModelBase
 
     protected function afterSave()
     {
-        mkdir(UPLOADS_DIR . $this->dir);
+        if (!is_dir(UPLOADS_DIR . $this->dir)) {
+            mkdir(UPLOADS_DIR . $this->dir);
+        }
     }
 }
