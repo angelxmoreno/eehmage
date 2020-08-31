@@ -19,10 +19,13 @@ function unique_in_db(string $field, $value, array $params, array $fields)
     /** @var ModelBase $model */
     $model = $params[0];
 
+    /** @var string $column */
+    $column = $params[1] ?? $field;
+
     $id = Hash::get($fields, 'id', null);
 
     $count = $model::where([
-        $field => $value,
+        $column => $value,
     ])->where('id', '<>', $id)->count();
 
     return $count == 0;
@@ -40,11 +43,14 @@ function exists_in_db(string $field, $value, array $params, array $fields)
     /** @var ModelBase $model */
     $model = $params[0];
 
+    /** @var string $column */
+    $column = $params[1];
+
     $count = $model::where([
-        $field => $value,
+        $column => $value,
     ])->count();
 
-    return $count == 0;
+    return $count > 0;
 }
 
 /**

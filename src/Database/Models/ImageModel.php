@@ -102,7 +102,7 @@ class ImageModel extends ModelBase
         $validator->rule('required', [
             'group_id',
         ])->message('{field} is required');
-        $validator->rule('ExistsInDb', 'group_id', GroupModel::class, 'group_id');
+        $validator->rule('ExistsInDb', 'group_id', GroupModel::class, 'id');
         $validator->rule('boolean', 'is_active');
         return parent::getRules($validator);
     }
