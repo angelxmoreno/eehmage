@@ -30,6 +30,9 @@ abstract class ModelBase extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $attributes = [
+        'is_active' => true,
+    ];
     /**
      * Create a new Eloquent model instance.
      *

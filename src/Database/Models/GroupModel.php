@@ -28,6 +28,7 @@ class GroupModel extends ModelBase
      */
     protected $fillable = [
         'name',
+        'is_active'
     ];
 
     /**

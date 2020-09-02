@@ -47,7 +47,7 @@ abstract class RestfulActions extends ActionBase
     }
 
     /**
-     * @return string
+     * @return ModelBase
      */
     abstract protected function getModel(): string;
 
@@ -92,7 +92,6 @@ abstract class RestfulActions extends ActionBase
     public function create()
     {
         try {
-            /** @var ModelBase $entity */
             $entity = $this->getModel()::buildFromRequest($this->getRequest());
             $entity->validateOrFail();
             $entity->saveOrFail();
